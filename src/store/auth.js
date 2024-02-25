@@ -28,6 +28,7 @@ export const d$auth = defineStore({
             try {
                 const { data } = await s$auth.login(body)
                 setCookies('CERT', data.token, { datetime: data.expiresAt })
+                this.a$setUser();
                 return true
             } catch ({ error, message }) {
                 throw message ?? error
@@ -35,15 +36,14 @@ export const d$auth = defineStore({
         },
         async a$register(body) {
             try {
-                const { status } = await s$auth.register(body)
-                return status
+                await s$auth.register(body)
             } catch ({ error, message }) {
                 throw message ?? error
             }
         },
         async a$logout() {
             try {
-                const { data } = await s$auth.logout()
+                await s$auth.logout()
                 delCookies('CERT')
                 this.id = undefined
                 this.name = undefined

@@ -10,9 +10,10 @@
         :class="getClasses(size, valid)"
         :name="name"
         :id="id"
-        :value="value"
+        :value="modelValue"
         :placeholder="placeholder"
         :isRequired="isRequired"
+        @input="(e) => $emit('update:modelValue', e.target.value)"
       />
       <span v-if="iconDir === 'right'" class="input-group-text">
         <i :class="getIcon(icon)"></i>
@@ -38,10 +39,19 @@ export default {
     name: String,
     id: String,
     value: String,
+    modelValue: {
+      type: String,
+      default: ''
+    },
     placeholder: String,
-    type: String,
+    type: {
+      type: String, // value type; ex: String, Boolean, Array
+      default: 'text', // default value
+      validator: (value) => ['text', 'password'].includes(value) // accepted value
+    },
     isRequired: Boolean,
   },
+  emits: ['update:modelValue'],
   methods: {
     getClasses: (size, valid) => {
       let sizeValue, isValidValue;

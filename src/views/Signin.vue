@@ -1,24 +1,48 @@
 <template>
+  <div class="container top-0 position-sticky z-index-sticky">
+    <div class="row">
+      <div class="col-12">
+        <navbar
+          isBlur="blur  border-radius-lg my-3 py-2 start-0 end-0 mx-4 shadow"
+          v-bind:darkMode="true"
+          isBtn="bg-gradient-success"
+        />
+      </div>
+    </div>
+  </div>
   <main class="mt-0 main-content">
     <section>
       <div class="page-header min-vh-100">
         <div class="container">
           <div class="row">
-            <div class="mx-auto col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0">
+            <div
+              class="mx-auto col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0"
+            >
               <div class="card card-plain">
                 <div class="pb-0 card-header text-start">
                   <h4 class="font-weight-bolder">Sign In</h4>
                   <p class="mb-0">Enter your username and password to sign in</p>
                 </div>
                 <div class="card-body">
-                  <form role="form">
+                  <form @submit.prevent="submitLogin" role="form">
                     <div class="mb-3">
-                      <argon-input type="text" placeholder="Username" name="username" size="lg" />
+                      <argon-input
+                        v-model="input.username"
+                        type="text"
+                        placeholder="Username"
+                        name="username"
+                        size="lg"
+                      />
                     </div>
                     <div class="mb-3">
-                      <argon-input type="password" placeholder="Password" name="password" size="lg" />
+                      <argon-input
+                        v-model="input.password"
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        size="lg"
+                      />
                     </div>
-                    
 
                     <div class="text-center">
                       <argon-button
@@ -27,20 +51,20 @@
                         color="success"
                         fullWidth
                         size="lg"
-                      >Sign in</argon-button>
+                        type="submit"
+                        >Sign in</argon-button
+                      >
                     </div>
                   </form>
                 </div>
                 <div class="px-1 pt-0 text-center card-footer px-lg-2">
                   <p class="mx-auto mb-4 text-sm">
                     Don't have an account?
-                    <router-link :to="{ name: 'Signup' }">
-                      <a
-                      href="javascript:;"
+                    <router-link
+                      to="/auth/signup"
                       class="text-success text-gradient font-weight-bold"
-                    >Sign up</a>
-                  </router-link>
-                    
+                      >Sign up</router-link
+                    >
                   </p>
                 </div>
               </div>
@@ -50,16 +74,21 @@
             >
               <div
                 class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
-                style="background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signin-ill.jpg');
-          background-size: cover;"
+                style="
+                  background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signin-ill.jpg');
+                  background-size: cover;
+                "
               >
                 <span class="mask bg-gradient-success opacity-6"></span>
                 <h4
                   class="mt-5 text-white font-weight-bolder position-relative"
-                >"Attention is the new currency"</h4>
-                <p
-                  class="text-white position-relative"
-                >The more effortless the writing looks, the more effort the writer actually put into the process.</p>
+                >
+                  "Attention is the new currency"
+                </h4>
+                <p class="text-white position-relative">
+                  The more effortless the writing looks, the more effort the
+                  writer actually put into the process.
+                </p>
               </div>
             </div>
           </div>
@@ -70,6 +99,8 @@
 </template>
 
 <script>
+import { mapActions } from "pinia";
+import { d$auth } from "@/store/auth";
 import ArgonInput from "@/components/ArgonInput.vue";
 import ArgonButton from "@/components/ArgonButton.vue";
 const body = document.getElementsByTagName("body")[0];
@@ -79,6 +110,40 @@ export default {
   components: {
     ArgonInput,
     ArgonButton,
+  },
+  data: () => ({
+    input: {
+      // Input
+      username: "",
+      password: "",
+    },
+  }),
+  methods: {
+    ...mapActions(d$auth, ["a$login", "a$logout", "a$setUser"]),
+    async submitLogin() {
+      try {
+        await this.a$login({ ...this.input });
+        alert("Signin Successfully");
+        this.$router.replace({ name: "Welcome" });
+      } catch (e) {
+        alert("Error in entering data");
+        console.error("method addlist error", e);
+      }
+    },
+    async logout() {
+      try {
+        this.a$logout();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    showUser() {
+      try {
+        this.a$setUser();
+      } catch (error) {
+        console.log("user error", error);
+      }
+    },
   },
   created() {
     this.$store.state.hideConfigButton = true;

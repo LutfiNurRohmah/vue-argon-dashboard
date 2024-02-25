@@ -1,12 +1,12 @@
 <template>
   <div class="py-4 container-fluid">
-    <div class=" row">
+    <div class="row">
       <div class="col-12">
         <div class="card">
           <div class="card-header pb-0">
             <div class="row">
               <div class="col-6">
-                <h6>My ToDo List</h6>
+                <h6>Nama Kelompok 14</h6>
               </div>
               <div class="col-6 text-end">
                 <form @submit.prevent="onSubmit" method="post">
@@ -14,9 +14,9 @@
                     <template v-slot:body>
                       <ArgonInput
                         type="text"
-                        v-model="input.title"
-                        placeholder="Input Title"
-                        name="title"
+                        v-model="input.name"
+                        placeholder="Input Your Member Name"
+                        name="name"
                         size="md"
                       />
                       <ArgonInput
@@ -52,7 +52,7 @@
                     <th
                       class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
                     >
-                      Title
+                      Name
                     </th>
                     <th
                       class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
@@ -89,7 +89,7 @@
                     <td>
                       <div class="d-flex px-3 py-1">
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm">{{ item.title }}</h6>
+                          <h6 class="mb-0 text-sm">{{ item.name }}</h6>
                         </div>
                       </div>
                     </td>
@@ -100,17 +100,28 @@
                     </td>
                     <td
                       class="align-middle text-center text-sm"
-                      v-if="item.completed"
+                      v-if="item.status === 'todo'"
                     >
-                      <span class="badge badge-sm bg-gradient-success">Completed</span>
+                      <span class="badge badge-sm bg-gradient-primary">{{
+                        item.status
+                      }}</span>
                     </td>
                     <td
                       class="align-middle text-center text-sm"
-                      v-else-if="!item.completed"
+                      v-else-if="item.status === 'done'"
                     >
-                      <span class="badge badge-sm bg-gradient-warning">Pending</span>
+                      <span class="badge badge-sm bg-gradient-success">{{
+                        item.status
+                      }}</span>
                     </td>
-                    
+                    <td
+                      class="align-middle text-center text-sm"
+                      v-else="item.status === 'pending'"
+                    >
+                      <span class="badge badge-sm bg-gradient-warning">{{
+                        item.status
+                      }}</span>
+                    </td>
                     <td class="align-middle text-center">
                       <span class="text-secondary text-xs font-weight-bold">{{
                         item.createdAt
@@ -153,7 +164,9 @@
 </template>
 
 <script>
-import { d$todo } from "@/store/todo";
+import AuthorsTable from "@/components/example/AuthorsTable.vue";
+import ProjectsTable from "@/components/example/ProjectsTable.vue";
+import d$todo from "@/store/todo";
 import { mapActions, mapState } from "pinia";
 import ArgonButton from "@/components/ArgonButton.vue";
 import BootstrapModal from "@/components/BootstrapModal.vue";
@@ -162,14 +175,17 @@ import ArgonInput from "@/components/ArgonInput.vue";
 export default {
   name: "tables",
   components: {
+    AuthorsTable,
+    ProjectsTable,
     ArgonButton,
     BootstrapModal,
     ArgonInput,
   },
   data() {
     return {
+      //input
       input: {
-        title: "",
+        name: "",
         description: "",
         category: "",
       },
@@ -179,7 +195,7 @@ export default {
     ...mapState(d$todo, ["g$list"]),
   },
   methods: {
-    ...mapActions(d$todo, ["a$list", "a$add", "a$remove"]),
+    ...mapActions(d$todo, ["a$list", "a$add", "a$del"]),
     async getList() {
       try {
         await this.a$list;
@@ -198,7 +214,7 @@ export default {
     async deleteTodo(idTodo) {
       try {
         if (confirm("Are you sure you delete this data?") == true) {
-          await this.a$remove(idTodo);
+          await this.a$del(idTodo);
           alert("Delete Successfully");
           this.$router.go(this.$router.currentRoute);
         } else {

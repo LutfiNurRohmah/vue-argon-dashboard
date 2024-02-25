@@ -7,7 +7,7 @@ export const d$todo = defineStore({
         list: [],
     }),
     actions: {
-        async a$listtodo() {
+        async a$list() {
             try {
                 const { data } = await s$todo.list()
                 this.list = data
@@ -15,9 +15,9 @@ export const d$todo = defineStore({
                 throw message ?? error
             }
         },
-        async a$detail(index) {
+        async a$detail(id) {
             try {
-                const { data } = await s$todo.detail(index)
+                const { data } = await s$todo.detail(id)
                 return data
             } catch ({ message, error }) {
                 throw message ?? error
@@ -26,25 +26,23 @@ export const d$todo = defineStore({
         async a$add(data) {
             try {
                 await s$todo.add(data)
-                await this.a$listtodo()
+                await this.a$list()
             } catch ({ message, error }) {
                 throw message ?? error
             }
         },
-        async a$remove(index) {
+        async a$remove(id) {
             try {
-                const id = await this.a$detail(index).id
                 await s$todo.remove(id)
-                await this.a$listtodo()
+                await this.a$list()
             } catch ({ message, error }) {
                 throw message ?? error
             }
         },
-        async a$edit(index, data) {
+        async a$edit(id, data) {
             try {
-                const id = await this.a$detail(index).id
                 await s$todo.edit(id, data) 
-                await this.a$listtodo()
+                await this.a$list()
             } catch ({ message, error }) {
                 throw message ?? error
             }
@@ -53,7 +51,10 @@ export const d$todo = defineStore({
     getters: {
         g$list: ({ list }) => list,
         g$detail: ({ list }) => {
-            return (index) => list[index]
+            return (id) => {
+                const index = list.findIndex(item => item.id == id)
+                return list[index]
+            }
         }
     }
 })

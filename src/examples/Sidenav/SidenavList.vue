@@ -6,8 +6,8 @@
     <ul class="navbar-nav">
       <li class="nav-item">
         <sidenav-item
-          url="/dashboard-default"
-          :class="getRoute() === 'dashboard-default' ? 'active' : ''"
+          url="/dashboard"
+          :class="getRoute() === 'dashboard' ? 'active' : ''"
           :navText="this.$store.state.isRTL ? 'لوحة القيادة' : 'Dashboard'"
         >
           <template v-slot:icon>
@@ -17,7 +17,7 @@
       </li>
       <li class="nav-item">
         <sidenav-item
-          url="/tables"
+          url="/dashboard/todo"
           :class="getRoute() === 'tables' ? 'active' : ''"
           :navText="this.$store.state.isRTL ? 'الجداول' : 'List Todo'"
         >
@@ -25,17 +25,6 @@
             <i
               class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"
             ></i>
-          </template>
-        </sidenav-item>
-      </li>
-      <li class="nav-item">
-        <sidenav-item
-          url="/billing"
-          :class="getRoute() === 'billing' ? 'active' : ''"
-          :navText="this.$store.state.isRTL ? 'الفواتیر' : 'Billing'"
-        >
-          <template v-slot:icon>
-            <i class="ni ni-credit-card text-success text-sm opacity-10"></i>
           </template>
         </sidenav-item>
       </li>
@@ -68,26 +57,14 @@
         </sidenav-item>
       </li>
       <li class="nav-item">
-        <sidenav-item
-          url="/signin"
-          :class="getRoute() === 'signin' ? 'active' : ''"
-          :navText="this.$store.state.isRTL ? 'تسجيل الدخول' : 'Sign In'"
-        >
-          <template v-slot:icon>
-            <i class="ni ni-single-copy-04 text-danger text-sm opacity-10"></i>
-          </template>
-        </sidenav-item>
-      </li>
-      <li class="nav-item">
-        <sidenav-item
-          url="/signup"
-          :class="getRoute() === 'signup' ? 'active' : ''"
-          :navText="this.$store.state.isRTL ? 'اشتراك' : 'Sign Up'"
-        >
-          <template v-slot:icon>
-            <i class="ni ni-collection text-info text-sm opacity-10"></i>
-          </template>
-        </sidenav-item>
+        <a href="#" class="nav-link" @click="logout">
+          <div
+            class="icon icon-shape icon-sm text-center d-flex align-items-center justify-content-center"
+          >
+            <i class="ni ni-fat-remove text-warning text-sm opacity-10"></i>
+          </div>
+          <span class="nav-link-text ms-1 text-warning">Logout</span>
+        </a>
       </li>
     </ul>
   </div>
@@ -96,6 +73,8 @@
 <script>
 import SidenavItem from "./SidenavItem.vue";
 import SidenavCard from "./SidenavCard.vue";
+import { mapActions } from "pinia";
+import { d$auth } from "@/store/auth";
 
 export default {
   name: "SidenavList",
@@ -104,7 +83,7 @@ export default {
   },
   data() {
     return {
-      title: "Argon Dashboard 2",
+      title: "My ToDo List App",
       controls: "dashboardsExamples",
       isActive: "active"
     };
@@ -118,6 +97,19 @@ export default {
       const routeArr = this.$route.path.split("/");
       return routeArr[1];
     }
-  }
+  },
+  ...mapActions(d$auth, ["a$logout"]),
+  logout() {
+    try {
+      if (confirm("Are you sure you want to leave?") == true) {
+        this.$router.go(this.$router.currentRoute);
+        this.a$logout();
+      } else {
+        this.$router.replace(this.$router.currentRoute);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 </script>
