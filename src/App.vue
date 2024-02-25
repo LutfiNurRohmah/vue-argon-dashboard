@@ -50,7 +50,6 @@ Coded by www.creative-tim.com
 </template>
 <script>
 import Sidenav from "@/examples/Sidenav/index.vue";
-import Configurator from "@/examples/Configurator.vue";
 import Navbar from "@/examples/Navbars/Navbar.vue";
 import AppFooter from "@/examples/Footer.vue";
 import { mapMutations } from "vuex";
@@ -59,7 +58,6 @@ export default {
   name: "App",
   components: {
     Sidenav,
-    Configurator,
     Navbar,
     AppFooter
   },

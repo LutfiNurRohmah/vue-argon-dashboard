@@ -49,17 +49,7 @@
             ></card>
           </div>
         </div>
-        <div class="row">
-          <div class="col-lg-7 mb-lg">
-            <!-- line chart -->
-            <div class="card z-index-2">
-              <gradient-line-chart />
-            </div>
-          </div>
-          <div class="col-lg-5">
-            <carousel />
-          </div>
-        </div>
+        
         <div class="row mt-4">
           <div class="col-lg-7 mb-lg-0 mb-4">
             <div class="card">
