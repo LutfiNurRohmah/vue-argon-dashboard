@@ -57,14 +57,16 @@
         </sidenav-item>
       </li>
       <li class="nav-item">
-        <a href="#" class="nav-link" @click="logout">
-          <div
-            class="icon icon-shape icon-sm text-center d-flex align-items-center justify-content-center"
-          >
+        <sidenav-item
+          url="/"
+          @click="logout()"
+          :navText="this.$store.state.isRTL ? 'حساب تعريفي' : 'Logout'"
+        >
+          <template v-slot:icon>
             <i class="ni ni-fat-remove text-warning text-sm opacity-10"></i>
-          </div>
-          <span class="nav-link-text ms-1 text-warning">Logout</span>
-        </a>
+          </template>
+        </sidenav-item>
+        
       </li>
     </ul>
   </div>
@@ -96,20 +98,20 @@ export default {
     getRoute() {
       const routeArr = this.$route.path.split("/");
       return routeArr[1];
-    }
-  },
-  ...mapActions(d$auth, ["a$logout"]),
-  logout() {
-    try {
-      if (confirm("Are you sure you want to leave?") == true) {
-        this.$router.go(this.$router.currentRoute);
-        this.a$logout();
-      } else {
-        this.$router.replace(this.$router.currentRoute);
+    },
+    ...mapActions(d$auth, ["a$logout"]),
+    logout() {
+      try {
+        if (confirm("Are you sure you want to leave?") == true) {
+          this.a$logout();
+          this.$router.go(this.$router.currentRoute); 
+        } else {
+          this.$router.replace(this.$router.currentRoute);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  },
+    },
+  },   
 };
 </script>

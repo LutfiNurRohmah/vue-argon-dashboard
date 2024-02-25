@@ -27,13 +27,17 @@
               <h5>Register</h5>
             </div>
             <div class="card-body">
-              <form role="form">
-                <argon-input type="text" placeholder="Name" aria-label="Name" />
-                <argon-input type="text" placeholder="Username" aria-label="Username" />
-                <argon-input type="password" placeholder="Password" aria-label="Password" />
+              <form role="form" @submit.prevent="registerr">
+                <argon-input v-model="this.input.name" type="text" placeholder="Name" aria-label="Name" />
+                <argon-input v-model="this.input.username" type="text" placeholder="Username" aria-label="Username" />
+                <argon-input v-model="this.input.password" type="password" placeholder="Password" aria-label="Password" />
                 
                 <div class="text-center">
-                  <argon-button fullWidth color="dark" variant="gradient" class="my-4 mb-2">Sign up</argon-button>
+                  <argon-button 
+                  type="submit"
+                  fullWidth color="dark" 
+                  variant="gradient" 
+                  class="my-4 mb-2">Sign up</argon-button>
                 </div>
                 <p class="text-sm mt-3 mb-0">
                   Already have an account?
@@ -59,11 +63,36 @@ import ArgonInput from "@/components/ArgonInput.vue";
 import ArgonButton from "@/components/ArgonButton.vue";
 const body = document.getElementsByTagName("body")[0];
 
+import { mapActions } from "pinia";
+import { d$auth } from "@/store/auth";
+
 export default {
-  name: "signin",
+  name: "signup",
   components: {
     ArgonInput,
     ArgonButton,
+  },
+  data() {
+    return {
+      //input
+      input: {
+        name: "",
+        email: "",
+        password: "",
+      },
+    };
+  },
+  methods: {
+    ...mapActions(d$auth, ["a$register"]),
+    async registerr() {
+      try {
+        await this.a$register({ ...this.input });
+        alert("Register Successfully");
+        this.$router.push("signin");
+      } catch (error) {
+        console.error("method addlist error", error);
+      }
+    },
   },
   created() {
     this.$store.state.hideConfigButton = true;
